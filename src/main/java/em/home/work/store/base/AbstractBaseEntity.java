@@ -1,4 +1,4 @@
-package em.home.work.store.entity;
+package em.home.work.store.base;
 
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;

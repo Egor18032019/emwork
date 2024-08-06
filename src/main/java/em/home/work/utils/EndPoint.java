@@ -18,5 +18,6 @@ public class EndPoint {
 
     public static final String INFO = "/info";
     public static final String TASKS = "/tasks";
+    public static final String COMMENT = "/comment";
     public static final String update= "/update";
 }

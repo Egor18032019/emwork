@@ -1,15 +1,25 @@
 package em.home.work.model;
 
+import em.home.work.store.comments.Comment;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class TaskResponse {
-    Long id;
+
+    Long creator;
+    String status;
+    String description;
+    String contractor;
+    List<Comment> comments;
+
 
 }

@@ -1,6 +1,6 @@
 package em.home.work.store.users;
 
-import em.home.work.store.entity.AbstractBaseEntity;
+import em.home.work.store.base.AbstractBaseEntity;
 import em.home.work.utils.RoleType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

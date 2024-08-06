@@ -54,6 +54,7 @@ public class SecurityConfiguration {
                         .requestMatchers(EndPoint.INFO + "/**").permitAll()
                         .requestMatchers(EndPoint.ADMIN + "/**").hasRole("ADMIN")
                         .requestMatchers(EndPoint.TASKS + "/**").hasRole("USER")
+                        .requestMatchers(EndPoint.COMMENT + "/**").hasRole("USER")
                         .requestMatchers(EndPoint.EXAMPLE).hasAnyRole("ADMIN", "USER")
                         .requestMatchers("/swagger-ui/**", "/swagger-resources/*", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll()

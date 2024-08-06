@@ -1,6 +1,6 @@
-package em.home.work.store.Comments;
+package em.home.work.store.comments;
 
-import em.home.work.store.entity.AbstractBaseEntity;
+import em.home.work.store.base.AbstractBaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
