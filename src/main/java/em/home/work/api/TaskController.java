@@ -81,12 +81,7 @@ public class TaskController {
     @DeleteMapping(value = "/{id}")
     @Operation(summary = "удалять")
     public ResponseEntity<String> deleteTask(@PathVariable Long id) {
-        //todo Пользователи могут управлять своими задачами !!
         taskService.deleteTask(id);
-        return ResponseEntity.ok("удалять");
+        return ResponseEntity.ok().build();
     }
 }
-/*
-
-
- */
