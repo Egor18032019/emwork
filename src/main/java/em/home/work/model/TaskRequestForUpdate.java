@@ -1,6 +1,5 @@
 package em.home.work.model;
 
-import em.home.work.store.tasks.Task;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,9 +9,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TaskRequest {
+public class TaskRequestForUpdate {
+    Long id;
     String status;
     String contractor;
     String priority;
     String description;
+    // создателя не редактируем
 }

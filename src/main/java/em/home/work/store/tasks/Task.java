@@ -17,11 +17,13 @@ import java.util.List;
 @NoArgsConstructor
 public class Task extends AbstractBaseEntity {
     @Column()
-    Long creator; // id пользователя создавшего задачу
+    String creator; // id пользователя создавшего задачу
     @Column()
     String status; // todo enum сделать
     @Column()
     String description;
+    @Column()
+    String priority;// todo enum сделать
     @Column()
     String contractor; // todo как брать и как обрабатывать ?
 
@@ -29,9 +31,10 @@ public class Task extends AbstractBaseEntity {
     @JoinColumn(name = "taskId", referencedColumnName = "id")
     private List<Comment> comments;
 
-    public Task( String description, String contractor ,Long creator) {
+    public Task(String description, String contractor, String creator, String priority) {
         this.description = description;
         this.contractor = contractor;
         this.creator = creator;
+        this.priority = priority;
     }
 }

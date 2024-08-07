@@ -1,8 +1,6 @@
 package em.home.work.api;
 
-import em.home.work.model.TaskRequest;
-import em.home.work.model.TaskIdResponse;
-import em.home.work.model.TaskResponse;
+import em.home.work.model.*;
 import em.home.work.service.TaskService;
 import em.home.work.store.tasks.Task;
 import em.home.work.utils.EndPoint;
@@ -14,6 +12,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -33,11 +32,9 @@ public class TaskController {
 
     @PutMapping(EndPoint.update)
     @Operation(summary = "редактировать существующие")
-    public ResponseEntity<String> updateTask() {
-        //todo Пользователи могут управлять своими задачами !!
-        //  а исполнители задачи могут менять статус своих задач.)
-        // то есть если создатель то может всё ?
-        // а если исполнитель то  может менять только статус своих задач.
+    public ResponseEntity<String> updateTask(@RequestBody TaskRequestForUpdate request) {
+
+        taskService.updateTask(request);
         return ResponseEntity.ok("редактировать существующие");
     }
 
@@ -47,8 +44,35 @@ public class TaskController {
 
         try {
             Task task = taskService.getTask(id);
-            TaskResponse taskResponse = new TaskResponse(task.getCreator(), task.getStatus(), task.getDescription(), task.getContractor(), task.getComments());
+            TaskResponse taskResponse = new TaskResponse(task);
             return ResponseEntity.ok(taskResponse);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    // API должно позволять получать задачи конкретного автора или исполнителя
+
+// todo фильтрация это как ? там или . или автора или исполнителя. Противоречие . Уточнить.
+    @GetMapping(value = "/creator/{name}")
+    @Operation(summary = "получить задачу по имени создателя.")
+    public ResponseEntity<ListTaskResponse> getTaskByNameCreator(@PathVariable String name) {
+        //todo Необходимо обеспечить фильтрацию и пагинацию вывода.
+        try {
+            List<TaskResponse> tasks = taskService.getTaskByNameCreator(name);
+            return ResponseEntity.ok(new ListTaskResponse(tasks));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping(value = "/contractor/{name}")
+    @Operation(summary = "получить задачу по имени исполнителя.")
+    public ResponseEntity<ListTaskResponse> getTaskByNameContractor(@PathVariable String name) {
+        //todo Необходимо обеспечить фильтрацию и пагинацию вывода.
+        try {
+            List<TaskResponse> tasks = taskService.getTaskByNameContractor(name);
+            return ResponseEntity.ok(new ListTaskResponse(tasks));
         } catch (NoSuchElementException e) {
             return ResponseEntity.badRequest().build();
         }
@@ -58,6 +82,7 @@ public class TaskController {
     @Operation(summary = "удалять")
     public ResponseEntity<String> deleteTask(@PathVariable Long id) {
         //todo Пользователи могут управлять своими задачами !!
+        taskService.deleteTask(id);
         return ResponseEntity.ok("удалять");
     }
 }
