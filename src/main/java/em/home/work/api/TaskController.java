@@ -51,9 +51,6 @@ public class TaskController {
         }
     }
 
-    // API должно позволять получать задачи конкретного автора или исполнителя
-
-// todo фильтрация это как ? там или . или автора или исполнителя. Противоречие . Уточнить.
     @GetMapping(value = "/creator/{name}")
     @Operation(summary = "получить задачу по имени создателя.")
     public ResponseEntity<ListTaskResponse> getTaskByNameCreator(@PathVariable String name) {
@@ -66,12 +63,15 @@ public class TaskController {
         }
     }
 
-    @GetMapping(value = "/contractor/{name}")
+    @GetMapping(value = "/contractor")
     @Operation(summary = "получить задачу по имени исполнителя.")
-    public ResponseEntity<ListTaskResponse> getTaskByNameContractor(@PathVariable String name) {
+    public ResponseEntity<ListTaskResponse> getTaskByNameContractor(@RequestParam String name,
+                                                                    @RequestParam(defaultValue = "0") int page,
+                                                                    @RequestParam(defaultValue = "5") int limit) {
         //todo Необходимо обеспечить фильтрацию и пагинацию вывода.
+        System.out.println(page+" "+limit+" "+name);
         try {
-            List<TaskResponse> tasks = taskService.getTaskByNameContractor(name);
+            List<TaskResponse> tasks = taskService.getTaskByNameContractor(name,page,limit);
             return ResponseEntity.ok(new ListTaskResponse(tasks));
         } catch (NoSuchElementException e) {
             return ResponseEntity.badRequest().build();

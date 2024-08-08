@@ -30,11 +30,4 @@ public class Task extends AbstractBaseEntity {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "taskId", referencedColumnName = "id")
     private List<Comment> comments;
-
-    public Task(String description, String contractor, String creator, String priority) {
-        this.description = description;
-        this.contractor = contractor;
-        this.creator = creator;
-        this.priority = priority;
-    }
 }

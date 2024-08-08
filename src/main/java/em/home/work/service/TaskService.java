@@ -12,8 +12,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,7 +31,7 @@ public class TaskService {
     @Operation(summary = "Создание task со статусом создано и без комментариев")
     public TaskIdResponse greatTask(TaskRequest taskRequest) {
         String creator = userService.getCurrentUser().getUsername();
-        Task task = new Task(taskRequest.getDescription(), taskRequest.getContractor(), creator, taskRequest.getPriority());
+        Task task = new Task(creator,"Created", taskRequest.getDescription(), taskRequest.getPriority(),taskRequest.getContractor(),new ArrayList<>());
         Task savedTask = taskRepository.save(task);
         return new TaskIdResponse(savedTask.getId());
     }
@@ -72,8 +75,8 @@ public class TaskService {
 
     }
 
-    public List<TaskResponse> getTaskByNameContractor(String name) {
-        List<Task> tasks = taskRepository.findAllByContractor(name);
+    public List<TaskResponse> getTaskByNameContractor(String name, int page, int limit) {
+        Page<Task> tasks = taskRepository.findAllByContractor(name, PageRequest.of(page, limit));
 
         return tasks.stream().map(TaskResponse::new).toList();
     }
