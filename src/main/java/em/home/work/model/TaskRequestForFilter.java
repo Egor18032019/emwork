@@ -25,9 +25,3 @@ public class TaskRequestForFilter {
                 '}';
     }
 }
-/*
-{ "name": "test",
-    "isFilterPriority": true,
-    "isFilterContractor": "high",
-    "isFilterDescription": "test"
- */

@@ -21,11 +21,10 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Tag(name = "Task Service", description = "Управление task.")
-public class TaskService {
+public class TaskService implements TaskServiceCommon{
     TaskRepository taskRepository;
     UserService userService;
 
-    @Operation(summary = "Создание task со статусом создано и без комментариев")
     public TaskIdResponse greatTask(TaskRequest taskRequest) {
         String creator = userService.getCurrentUser().getUsername();
         Task task = new Task(creator, "Created", taskRequest.getDescription(), taskRequest.getPriority(), taskRequest.getContractor(), new ArrayList<>());

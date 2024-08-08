@@ -1,7 +1,7 @@
 package em.home.work.api;
 
 import em.home.work.model.*;
-import em.home.work.service.TaskService;
+import em.home.work.service.TaskServiceCommon;
 import em.home.work.store.tasks.Task;
 import em.home.work.utils.EndPoint;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
 @Tag(name = "Управление задачами")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class TaskController {
-    TaskService taskService;
+    TaskServiceCommon taskService;
 
     @PostMapping(EndPoint.great)
     @Operation(summary = "создавать новые")
@@ -52,11 +52,10 @@ public class TaskController {
     }
 
     @GetMapping(value = "/creator")
-    @Operation(summary = "получить задачу по имени создателя.")
+    @Operation(summary = "получить задачу по имени создателя + возможность фильтрации+ лимит и пагинация вывода.")
     public ResponseEntity<ListTaskResponse> getTaskByNameCreator(@RequestBody TaskRequestForFilter request,
                                                                   @RequestParam(defaultValue = "0") int offset,
                                                                   @RequestParam(defaultValue = "5") int limit) {
-        //todo Необходимо обеспечить фильтрацию и пагинацию вывода.
         try {
             List<TaskResponse> tasks = taskService.getTaskByNameCreator(request,offset,limit);
             return ResponseEntity.ok(new ListTaskResponse(tasks));
@@ -66,7 +65,7 @@ public class TaskController {
     }
 
     @GetMapping(value = "/contractor")
-    @Operation(summary = "получить задачу по имени исполнителя.")
+    @Operation(summary = "получить задачу по имени исполнителя возможность фильтрации + лимит и пагинация вывода.")
     public ResponseEntity<ListTaskResponse> getTaskByNameContractor(@RequestBody TaskRequestForFilter request,
                                                                     @RequestParam(defaultValue = "0") int offset,
                                                                     @RequestParam(defaultValue = "5") int limit) {

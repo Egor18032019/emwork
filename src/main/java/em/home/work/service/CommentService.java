@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Tag(name = "Comment Service", description = "Управление комментариями.")
-public class CommentService { //todo сделать интерфейс
+public class CommentService implements CommentServiceCommon {
     CommentRepository commentRepository;
     UserService userService;
 

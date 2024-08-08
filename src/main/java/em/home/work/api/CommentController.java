@@ -2,9 +2,7 @@ package em.home.work.api;
 
 import em.home.work.model.CommentIdResponse;
 import em.home.work.model.CommentRequest;
-import em.home.work.model.TaskIdResponse;
-import em.home.work.model.TaskRequest;
-import em.home.work.service.CommentService;
+import em.home.work.service.CommentServiceCommon;
 import em.home.work.utils.EndPoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Управление комментариями")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CommentController {
-    CommentService commentService;
+    CommentServiceCommon commentService;
 
     @PostMapping(EndPoint.great)
     @Operation(summary = "создавать новый комментарий")
