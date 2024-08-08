@@ -1,9 +1,6 @@
 package em.home.work.service;
 
-import em.home.work.model.TaskRequest;
-import em.home.work.model.TaskIdResponse;
-import em.home.work.model.TaskRequestForUpdate;
-import em.home.work.model.TaskResponse;
+import em.home.work.model.*;
 import em.home.work.store.tasks.Task;
 import em.home.work.store.tasks.TaskRepository;
 import em.home.work.store.users.User;
@@ -31,9 +28,9 @@ public class TaskService {
     @Operation(summary = "Создание task со статусом создано и без комментариев")
     public TaskIdResponse greatTask(TaskRequest taskRequest) {
         String creator = userService.getCurrentUser().getUsername();
-        Task task = new Task(creator,"Created", taskRequest.getDescription(), taskRequest.getPriority(),taskRequest.getContractor(),new ArrayList<>());
-        Task savedTask = taskRepository.save(task);
-        return new TaskIdResponse(savedTask.getId());
+        Task task = new Task(creator, "Created", taskRequest.getDescription(), taskRequest.getPriority(), taskRequest.getContractor(), new ArrayList<>());
+        taskRepository.save(task);
+        return new TaskIdResponse(task.getId());
     }
 
     public Task getTask(Long id) {
@@ -68,16 +65,31 @@ public class TaskService {
         }
     }
 
-    public List<TaskResponse> getTaskByNameCreator(String name) {
-        List<Task> tasks = taskRepository.findAllByCreator(name);
-
+    public List<TaskResponse> getTaskByNameCreator(TaskRequestForFilter request, int page, int limit) {
+        Page<Task> tasksPages = taskRepository.findAllByCreator(request.getName(), PageRequest.of(page, limit));
+        List<Task> tasks = filterTasks(tasksPages, request);
         return tasks.stream().map(TaskResponse::new).toList();
 
     }
 
-    public List<TaskResponse> getTaskByNameContractor(String name, int page, int limit) {
-        Page<Task> tasks = taskRepository.findAllByContractor(name, PageRequest.of(page, limit));
+    public List<TaskResponse> getTaskByNameContractor(TaskRequestForFilter request, int page, int limit) {
+        Page<Task> tasksPages = taskRepository.findAllByContractor(request.getName(), PageRequest.of(page, limit));
+        List<Task> tasks = filterTasks(tasksPages, request);
 
         return tasks.stream().map(TaskResponse::new).toList();
+    }
+
+    private List<Task> filterTasks(Page<Task> tasksPages, TaskRequestForFilter request) {
+        List<Task> tasks = tasksPages.stream().toList();
+        if (request.getFilterDescription() != null) {
+            tasks = tasks.stream().filter(task -> task.getDescription().contains(request.getFilterDescription())).toList();
+        }
+        if (request.getFilterPriority() != null) {
+            tasks = tasks.stream().filter(task -> task.getPriority().contains(request.getFilterPriority())).toList();
+        }
+        if (request.getFilterContractor() != null) {
+            tasks = tasks.stream().filter(task -> task.getContractor().contains(request.getFilterContractor())).toList();
+        }
+        return tasks;
     }
 }

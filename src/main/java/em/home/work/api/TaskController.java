@@ -51,12 +51,14 @@ public class TaskController {
         }
     }
 
-    @GetMapping(value = "/creator/{name}")
+    @GetMapping(value = "/creator")
     @Operation(summary = "получить задачу по имени создателя.")
-    public ResponseEntity<ListTaskResponse> getTaskByNameCreator(@PathVariable String name) {
+    public ResponseEntity<ListTaskResponse> getTaskByNameCreator(@RequestBody TaskRequestForFilter request,
+                                                                  @RequestParam(defaultValue = "0") int offset,
+                                                                  @RequestParam(defaultValue = "5") int limit) {
         //todo Необходимо обеспечить фильтрацию и пагинацию вывода.
         try {
-            List<TaskResponse> tasks = taskService.getTaskByNameCreator(name);
+            List<TaskResponse> tasks = taskService.getTaskByNameCreator(request,offset,limit);
             return ResponseEntity.ok(new ListTaskResponse(tasks));
         } catch (NoSuchElementException e) {
             return ResponseEntity.badRequest().build();
@@ -65,13 +67,11 @@ public class TaskController {
 
     @GetMapping(value = "/contractor")
     @Operation(summary = "получить задачу по имени исполнителя.")
-    public ResponseEntity<ListTaskResponse> getTaskByNameContractor(@RequestParam String name,
-                                                                    @RequestParam(defaultValue = "0") int page,
+    public ResponseEntity<ListTaskResponse> getTaskByNameContractor(@RequestBody TaskRequestForFilter request,
+                                                                    @RequestParam(defaultValue = "0") int offset,
                                                                     @RequestParam(defaultValue = "5") int limit) {
-        //todo Необходимо обеспечить фильтрацию и пагинацию вывода.
-        System.out.println(page+" "+limit+" "+name);
         try {
-            List<TaskResponse> tasks = taskService.getTaskByNameContractor(name,page,limit);
+            List<TaskResponse> tasks = taskService.getTaskByNameContractor(request,offset,limit);
             return ResponseEntity.ok(new ListTaskResponse(tasks));
         } catch (NoSuchElementException e) {
             return ResponseEntity.badRequest().build();

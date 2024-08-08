@@ -2,7 +2,6 @@ package em.home.work.model;
 
 import em.home.work.store.comments.Comment;
 import em.home.work.store.tasks.Task;
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +19,7 @@ public class TaskResponse {
     String status;
     String description;
     String contractor;
+    String priority;
     List<Comment> comments;
 
 
@@ -30,5 +30,6 @@ public class TaskResponse {
         this.description = task.getDescription();
         this.contractor = task.getContractor();
         this.comments = task.getComments();
+        this.priority = task.getPriority();
     }
 }
