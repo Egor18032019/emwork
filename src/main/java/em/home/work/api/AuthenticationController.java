@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,19 +26,26 @@ import org.springframework.web.bind.annotation.RestController;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Tag(name = "Authentication Controller", description = "Контроллер для аутентификации и регистрации пользователей")
 public class AuthenticationController {
-      AuthenticationService authenticationService;
-      JwtTokenService jwtService;
+    AuthenticationService authenticationService;
+    JwtTokenService jwtService;
 
     @Operation(summary = "Регистрация пользователя")
     @PostMapping(EndPoint.REGISTER)
-    public JwtAuthenticationResponse signUp(@RequestBody @Valid SignUpRequest request) {
-        return authenticationService.signUp(request);
+    public ResponseEntity<JwtAuthenticationResponse> signUp(@RequestBody @Valid SignUpRequest request) {
+
+        try {
+            JwtAuthenticationResponse response = authenticationService.signUp(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (IllegalArgumentException e) {
+            return  ResponseEntity.badRequest().build();
+        }
+
     }
 
     @Operation(summary = "Авторизация пользователя")
     @PostMapping(EndPoint.LOGIN)
-    public JwtAuthenticationResponse signIn(@RequestBody @Valid SignInRequest request) {
-        return authenticationService.signIn(request);
+    public ResponseEntity<JwtAuthenticationResponse> signIn(@RequestBody @Valid SignInRequest request) {
+        return ResponseEntity.ok(authenticationService.signIn(request));
     }
 
     @PostMapping(EndPoint.REFRESH)

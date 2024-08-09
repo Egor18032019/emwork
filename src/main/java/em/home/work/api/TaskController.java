@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,15 +28,18 @@ public class TaskController {
     @Operation(summary = "создавать новые")
     public ResponseEntity<TaskIdResponse> greatTask(@RequestBody TaskRequest taskRequest) {
         TaskIdResponse taskIdResponse = taskService.greatTask(taskRequest);
-        return ResponseEntity.ok(taskIdResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(taskIdResponse);
     }
 
     @PutMapping(EndPoint.update)
     @Operation(summary = "редактировать существующие")
     public ResponseEntity<String> updateTask(@RequestBody TaskRequestForUpdate request) {
-
-        taskService.updateTask(request);
-        return ResponseEntity.ok("редактировать существующие");
+        try {
+            taskService.updateTask(request);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping(value = "/{id}")
@@ -54,10 +58,10 @@ public class TaskController {
     @GetMapping(value = "/creator")
     @Operation(summary = "получить задачу по имени создателя + возможность фильтрации+ лимит и пагинация вывода.")
     public ResponseEntity<ListTaskResponse> getTaskByNameCreator(@RequestBody TaskRequestForFilter request,
-                                                                  @RequestParam(defaultValue = "0") int offset,
-                                                                  @RequestParam(defaultValue = "5") int limit) {
+                                                                 @RequestParam(defaultValue = "0") int offset,
+                                                                 @RequestParam(defaultValue = "5") int limit) {
         try {
-            List<TaskResponse> tasks = taskService.getTaskByNameCreator(request,offset,limit);
+            List<TaskResponse> tasks = taskService.getTaskByNameCreator(request, offset, limit);
             return ResponseEntity.ok(new ListTaskResponse(tasks));
         } catch (NoSuchElementException e) {
             return ResponseEntity.badRequest().build();
@@ -70,7 +74,7 @@ public class TaskController {
                                                                     @RequestParam(defaultValue = "0") int offset,
                                                                     @RequestParam(defaultValue = "5") int limit) {
         try {
-            List<TaskResponse> tasks = taskService.getTaskByNameContractor(request,offset,limit);
+            List<TaskResponse> tasks = taskService.getTaskByNameContractor(request, offset, limit);
             return ResponseEntity.ok(new ListTaskResponse(tasks));
         } catch (NoSuchElementException e) {
             return ResponseEntity.badRequest().build();
@@ -80,7 +84,11 @@ public class TaskController {
     @DeleteMapping(value = "/{id}")
     @Operation(summary = "удалять")
     public ResponseEntity<String> deleteTask(@PathVariable Long id) {
-        taskService.deleteTask(id);
-        return ResponseEntity.ok().build();
+        try {
+            taskService.deleteTask(id);
+            return ResponseEntity.ok().build();
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

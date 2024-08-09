@@ -2,6 +2,8 @@ package em.home.work.store.tasks;
 
 import em.home.work.store.comments.Comment;
 import em.home.work.store.base.AbstractBaseEntity;
+import em.home.work.utils.Priority;
+import em.home.work.utils.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -19,11 +21,11 @@ public class Task extends AbstractBaseEntity {
     @Column()
     String creator; // id пользователя создавшего задачу
     @Column()
-    String status; // todo enum сделать
+    Status status;
     @Column()
     String description;
     @Column()
-    String priority;// todo enum сделать
+    Priority priority;
     @Column()
     String contractor; // todo как брать и как обрабатывать ?
 

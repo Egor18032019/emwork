@@ -7,21 +7,28 @@ services:
     ports:
       - "${HTTP_HOST_PORT}:8080"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
-      - SPRING_DATASOURCE_URL=${MYSQL_DATABASE}
-      - SPRING_DATASOURCE_USERNAME=${MYSQL_USER}
-      - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD}
-    restart: always
+      - SPRING_DATASOURCE_URL=${DB_JDBC_URL}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
   db:
-    image: percona:ps-8.0.36-28
+    container_name: db
+    image: postgres:16-alpine
     environment:
-      - MYSQL_DATABASE=${MYSQL_DATABASE_NAME}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-    expose:
-      - "3306"
+      # Super-User: by default POSTGRES_USER="postgres"
+      - "POSTGRES_DB=${POSTGRES_DB}"
+      #      - "POSTGRES_USER=${POSTGRES_USER}"
+      - "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}"
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    #restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 
 

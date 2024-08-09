@@ -4,7 +4,7 @@ import em.home.work.model.*;
 import em.home.work.store.tasks.Task;
 import em.home.work.store.tasks.TaskRepository;
 import em.home.work.store.users.User;
-import io.swagger.v3.oas.annotations.Operation;
+import em.home.work.utils.Status;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ public class TaskService implements TaskServiceCommon{
 
     public TaskIdResponse greatTask(TaskRequest taskRequest) {
         String creator = userService.getCurrentUser().getUsername();
-        Task task = new Task(creator, "Created", taskRequest.getDescription(), taskRequest.getPriority(), taskRequest.getContractor(), new ArrayList<>());
+        Task task = new Task(creator, Status.GREAT, taskRequest.getDescription(), taskRequest.getPriority(), taskRequest.getContractor(), new ArrayList<>());
         taskRepository.save(task);
         return new TaskIdResponse(task.getId());
     }
@@ -42,7 +42,8 @@ public class TaskService implements TaskServiceCommon{
         User sender = userService.getCurrentUser();
 
         if (Objects.equals(sender.getUsername(), request.getContractor())) {
-            task.setPriority(request.getPriority());
+            // исполнитель вправе менять только статус.
+            task.setStatus(request.getStatus());
         }
         //todo создатель может быть исполнителем ?
         if (Objects.equals(sender.getUsername(), task.getCreator())) {
@@ -58,7 +59,7 @@ public class TaskService implements TaskServiceCommon{
     public void deleteTask(Long id) {
         User sender = userService.getCurrentUser();
         Task task = taskRepository.findById(id).orElseThrow();
-        //todo сделать ошибку 404
+
         if (Objects.equals(sender.getUsername(), task.getCreator())) {
             taskRepository.delete(task);
         }
@@ -84,10 +85,10 @@ public class TaskService implements TaskServiceCommon{
             tasks = tasks.stream().filter(task -> task.getDescription().contains(request.getFilterDescription())).toList();
         }
         if (request.getFilterPriority() != null) {
-            tasks = tasks.stream().filter(task -> task.getPriority().contains(request.getFilterPriority())).toList();
+            tasks = tasks.stream().filter(task -> task.getPriority().equals(request.getFilterPriority())).toList();
         }
         if (request.getFilterContractor() != null) {
-            tasks = tasks.stream().filter(task -> task.getContractor().contains(request.getFilterContractor())).toList();
+            tasks = tasks.stream().filter(task -> task.getContractor().equals(request.getFilterContractor())).toList();
         }
         return tasks;
     }

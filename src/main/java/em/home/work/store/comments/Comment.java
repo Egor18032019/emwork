@@ -19,7 +19,6 @@ public class Comment extends AbstractBaseEntity {
     String author;
     @Column()
     String text;
-
     @Column()
     private Long taskId;
 }

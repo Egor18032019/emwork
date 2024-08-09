@@ -3,7 +3,7 @@ WORKDIR /app
 #- создаем директорию app внутри слоя образа.
 COPY . /app/.
 #- копируем все наши папки с текущего проекта в папку app в слое образа.
-RUN mvn -f /app/pom.xml clean package -D  maven.test.skip=true
+RUN mvn -f /app/pom.xml clean package -D  maven.test.skip=false
 
 # - запускаем maven, который билдит наш проект и получаем jar-ник.
 FROM eclipse-temurin:17-jre-alpine

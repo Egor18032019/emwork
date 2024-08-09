@@ -1,5 +1,6 @@
 package em.home.work.model;
 
+import em.home.work.utils.Priority;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class TaskRequestForFilter {
     String name;
-    String filterPriority;
+    Priority filterPriority;
     String filterContractor;
     String filterDescription;
 

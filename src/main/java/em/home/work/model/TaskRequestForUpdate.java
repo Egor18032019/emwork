@@ -1,5 +1,7 @@
 package em.home.work.model;
 
+import em.home.work.utils.Priority;
+import em.home.work.utils.Status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,9 +13,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class TaskRequestForUpdate {
     Long id;
-    String status;
+    Status status;
     String contractor;
-    String priority;
+    Priority priority;
     String description;
     // создателя не редактируем
 }
