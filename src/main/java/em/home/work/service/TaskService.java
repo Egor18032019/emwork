@@ -12,6 +12,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,10 +22,10 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Tag(name = "Task Service", description = "Управление task.")
-public class TaskService implements TaskServiceCommon{
+public class TaskService implements TaskServiceCommon {
     TaskRepository taskRepository;
     UserService userService;
-
+    @Transactional
     public TaskIdResponse greatTask(TaskRequest taskRequest) {
         String creator = userService.getCurrentUser().getUsername();
         Task task = new Task(creator, Status.GREAT, taskRequest.getDescription(), taskRequest.getPriority(), taskRequest.getContractor(), new ArrayList<>());
@@ -35,7 +36,7 @@ public class TaskService implements TaskServiceCommon{
     public Task getTask(Long id) {
         return taskRepository.findById(id).orElseThrow();
     }
-
+    @Transactional
     public void updateTask(TaskRequestForUpdate request) {
         Task task = taskRepository.findById(request.getId()).orElseThrow();
         //todo сделать ошибку 404
@@ -55,7 +56,7 @@ public class TaskService implements TaskServiceCommon{
         taskRepository.save(task);
     }
 
-
+    @Transactional
     public void deleteTask(Long id) {
         User sender = userService.getCurrentUser();
         Task task = taskRepository.findById(id).orElseThrow();
@@ -66,6 +67,9 @@ public class TaskService implements TaskServiceCommon{
     }
 
     public List<TaskResponse> getTaskByNameCreator(TaskRequestForFilter request, int page, int limit) {
+        //todo  построить с CreteriaAPI и интерфейсом Specification
+        // или нативный запрос в бд через jsql
+        //запрос в бд с параметрами
         Page<Task> tasksPages = taskRepository.findAllByCreator(request.getName(), PageRequest.of(page, limit));
         List<Task> tasks = filterTasks(tasksPages, request);
         return tasks.stream().map(TaskResponse::new).toList();
@@ -75,10 +79,10 @@ public class TaskService implements TaskServiceCommon{
     public List<TaskResponse> getTaskByNameContractor(TaskRequestForFilter request, int page, int limit) {
         Page<Task> tasksPages = taskRepository.findAllByContractor(request.getName(), PageRequest.of(page, limit));
         List<Task> tasks = filterTasks(tasksPages, request);
-
+//todo В запросах с пагинацией возвращаем Pageble или аналог вместа списка. Потребителю нужна мета информация об офсетах
         return tasks.stream().map(TaskResponse::new).toList();
     }
-
+    //todo переделать
     private List<Task> filterTasks(Page<Task> tasksPages, TaskRequestForFilter request) {
         List<Task> tasks = tasksPages.stream().toList();
         if (request.getFilterDescription() != null) {

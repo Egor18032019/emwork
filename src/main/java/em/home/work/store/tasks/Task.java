@@ -19,7 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Task extends AbstractBaseEntity {
     @Column()
-    String creator; // id пользователя создавшего задачу
+    String creator;
     @Column()
     Status status;
     @Column()
